@@ -1,10 +1,12 @@
 package org.example.pres;
 
+import org.example.dao.DaoImpl;
 import org.example.dao.IDao;
 import org.example.metier.MetierImpl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Method;
 import java.util.Scanner;
 
 public class PresentationV2 {
@@ -20,7 +22,11 @@ public class PresentationV2 {
             //        MetierImpl metier = new MetierImpl(dao);// injection via constructor
             String metierClassName = scanner.nextLine();
             Class cMetier = Class.forName(metierClassName);
-            MetierImpl metier = (MetierImpl) cMetier.getConstructor(IDao.class).newInstance(dao);
+            MetierImpl metier = (MetierImpl) cMetier.getConstructor().newInstance();
+            // with setters
+            Method setDao = cMetier.getDeclaredMethod("setDao", IDao.class);
+            setDao.invoke(metier, dao);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
